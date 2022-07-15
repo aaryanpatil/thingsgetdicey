@@ -18,6 +18,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Jumping")]
     [SerializeField] float jumpForce = 10f;
     [SerializeField] int jumpCount = 0;
+    [SerializeField] int maxJumps = 2;
 
 
 
@@ -42,10 +43,21 @@ public class PlayerMovement : MonoBehaviour
 
     void OnJump(InputValue value)
     {
-        if (value.isPressed)
+        jumpCount++;
+        if (value.isPressed && jumpCount <= maxJumps)
         {
-            Debug.Log("Jumped");
-            rb2d.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
+            if(rb2d.velocity.y < 0)
+                {
+                    rb2d.AddForce(new Vector2(0f, jumpForce - rb2d.velocity.y), ForceMode2D.Impulse);
+                }
+                else if(rb2d.velocity.y > 0)
+                {
+                    rb2d.AddForce(new Vector2(0f, jumpForce - rb2d.velocity.y), ForceMode2D.Impulse);
+                }
+                else
+                {
+                    rb2d.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
+                }
         }
     }
 
@@ -53,8 +65,14 @@ public class PlayerMovement : MonoBehaviour
     {
         currentInputVector = Vector2.SmoothDamp(currentInputVector, moveInput, ref smoothInputVelocity, smoothInputSpeed);
         Vector2 playerVelocity = new Vector2(currentInputVector.x * runSpeed *  Time.fixedDeltaTime, rb2d.velocity.y);
-        rb2d.velocity = playerVelocity;
+        rb2d.velocity = playerVelocity;     
+    }
 
-        
+    private void OnCollisionEnter2D(Collision2D other) 
+    {
+        if (other.gameObject.CompareTag("Ground"))
+        {
+            jumpCount = 0;
+        } 
     }
 }
