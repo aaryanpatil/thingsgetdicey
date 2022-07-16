@@ -29,10 +29,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float gravityNormal; 
     [SerializeField] float runSpeedIncrease; 
     [SerializeField] float runSpeedDecrease;
-    [SerializeField] float runSpeedNormal; 
-    [SerializeField] float dragIncrease; 
-    [SerializeField] float dragDecrease; 
-    [SerializeField] float dragNormal;
+    [SerializeField] float runSpeedNormal;
+    [SerializeField] PhysicsMaterial2D sticky;
+    [SerializeField] PhysicsMaterial2D slippery;
 
     Rigidbody2D rb2d; 
     BoxCollider2D boxCollider2D;
@@ -60,25 +59,36 @@ public class PlayerMovement : MonoBehaviour
         Run();
     }
 
-    // IEnumerator Tweak()
-    // {
-    //     yield return new WaitForSecondsRealtime(timer.timerDuration);
-    //     TweakGravity();
-    //     TweakSpeed();
-    // }
+    void TweakFriction()
+    {
+        int fac = 0;
+        fac = RandomNumberGenerator.GetInt32(1, 7);
+        Debug.Log("Speed: " + fac);
+
+        if(fac < 3)
+        {
+            boxCollider2D.sharedMaterial = sticky;
+            return;
+        }
+        else 
+        {
+            boxCollider2D.sharedMaterial = slippery;
+            return;
+        }
+    }
 
     void TweakSpeed()
     {
         int fac = 0;
-        fac = RandomNumberGenerator.GetInt32(100);
-        Debug.Log("Speed" + fac);
+        fac = RandomNumberGenerator.GetInt32(1, 4);
+        Debug.Log("Speed: " + fac);
 
-        if(fac < 35)
+        if(fac == 1)
         {
             runSpeed = runSpeedIncrease;
             return;
         }
-        else if(fac < 70)
+        else if(fac == 2)
         {
             runSpeed = runSpeedDecrease;
             return;
@@ -92,15 +102,15 @@ public class PlayerMovement : MonoBehaviour
     void TweakGravity()
     {
         int fac = 0;
-        fac = RandomNumberGenerator.GetInt32(100);
-        Debug.Log("Gravity" + fac);
+        fac = RandomNumberGenerator.GetInt32(1, 4);
+        Debug.Log("Gravity: " + fac);
 
-        if(fac < 35)
+        if(fac == 1)
         {
             rb2d.gravityScale = gravityIncrease;
             return;
         }
-        else if(fac < 70)
+        else if(fac == 2)
         {
             rb2d.gravityScale = gravityDecrease;
             return;
@@ -115,6 +125,7 @@ public class PlayerMovement : MonoBehaviour
     {
         TweakGravity();
         TweakSpeed();
+        TweakFriction();
     }
     private void OnTriggerEnter2D(Collider2D other) 
     {
@@ -122,6 +133,11 @@ public class PlayerMovement : MonoBehaviour
         {
             jumpCount = 0;
         }
+
+        // if (other.gameObject.CompareTag("Hazard"))
+        // {
+        //     ProcessDeath();
+        // }
     }
 
     void Run()
