@@ -30,7 +30,9 @@ public class PlayerMovement : MonoBehaviour
     [Header("Randomness")]
     [SerializeField] float gravityIncrease; 
     [SerializeField] float gravityDecrease; 
-    [SerializeField] float gravityNormal; 
+    [SerializeField] float gravityNormal;
+    [SerializeField] float gravityReverse;
+
     [SerializeField] float runSpeedIncrease; 
     [SerializeField] float runSpeedDecrease;
     [SerializeField] float runSpeedNormal;
@@ -45,6 +47,8 @@ public class PlayerMovement : MonoBehaviour
     
     Timer timer;
 
+    SessionManager sessionManager;
+
 
     private void Awake() 
     {
@@ -52,7 +56,8 @@ public class PlayerMovement : MonoBehaviour
         boxCollider2D = GetComponent<BoxCollider2D>();
         circleCollider2D = GetComponent<CircleCollider2D>();
         timer = FindObjectOfType<Timer>();
-        animator = GetComponent<Animator>();   
+        animator = GetComponent<Animator>(); 
+        sessionManager = FindObjectOfType<SessionManager>();  
     }
 
     private void Start() 
@@ -65,11 +70,14 @@ public class PlayerMovement : MonoBehaviour
         Run();
     }
 
-    void ProcessDeath()
+    public void ProcessDeath()
     {
-        rb2d.AddForce(new Vector2 (0, deathVelocityY * rb2d.gravityScale), ForceMode2D.Impulse); 
+        rb2d.AddForce(new Vector2 (0, deathVelocityY), ForceMode2D.Impulse);
+        boxCollider2D.enabled = false; 
         animator.SetTrigger("Death");
         Destroy(gameObject, delayDeath);
+
+        sessionManager.ReloadLevel();
     }
 
     void TweakFriction()
@@ -81,6 +89,7 @@ public class PlayerMovement : MonoBehaviour
         if(fac < 3)
         {
             boxCollider2D.sharedMaterial = sticky;
+            jumpCount = 0;
             return;
         }
         else 
@@ -115,18 +124,22 @@ public class PlayerMovement : MonoBehaviour
     void TweakGravity()
     {
         int fac = 0;
-        fac = RandomNumberGenerator.GetInt32(1, 4);
+        fac = RandomNumberGenerator.GetInt32(1, 15);
         Debug.Log("Gravity: " + fac);
 
-        if(fac == 1)
+        if(fac < 4)
         {
             rb2d.gravityScale = gravityIncrease;
             return;
         }
-        else if(fac == 2)
+        else if(fac < 7)
         {
             rb2d.gravityScale = gravityDecrease;
             return;
+        }
+        else if(fac < 10)
+        {
+            rb2d.gravityScale = gravityReverse;
         }
         else
         {
@@ -147,6 +160,14 @@ public class PlayerMovement : MonoBehaviour
             jumpCount = 0;
         }
 
+        if (other.gameObject.CompareTag("Hazard"))
+        {
+            ProcessDeath();
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D other) 
+    {
         if (other.gameObject.CompareTag("Hazard"))
         {
             ProcessDeath();
@@ -178,6 +199,7 @@ public class PlayerMovement : MonoBehaviour
         jumpCount++;
         if (value.isPressed && jumpCount <= maxJumps)
         {
+            animator.SetBool("Running", true);
             if(rb2d.velocity.y < 0)
             {
                 rb2d.AddForce(new Vector2(0f, jumpForce - rb2d.velocity.y), ForceMode2D.Impulse);
@@ -190,6 +212,10 @@ public class PlayerMovement : MonoBehaviour
             {
                 rb2d.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
             }
+        }
+        else
+        {
+            animator.SetBool("Running", false); 
         }
     }   
 }
