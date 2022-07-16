@@ -1,32 +1,40 @@
 
 using UnityEngine;
 using TMPro;
-
+using UnityEditor;
 
 public class Timer : MonoBehaviour
 {
-    [SerializeField] float timerDuration = 5f;
-    float currentTime;
+    public float timerDuration = 5f;
+    public TextMeshProUGUI timerText;
     
-    [SerializeField] TextMeshProUGUI timerText;
+    public float currentTime;
+    public bool changeRandomness = false;
+    
 
     private void Start() 
     {
         currentTime = timerDuration;
         timerText.text = currentTime.ToString();       
     }
-    private void FixedUpdate() 
+    private void FixedUpdate()
     {
-        currentTime -= Time.fixedDeltaTime;
-        if(currentTime >= 0)
+        RunTimer();
+    }
+
+    public bool RunTimer()
+    {
+        currentTime -= Time.deltaTime;
+        if (currentTime >= 0)
         {
-            currentTime = Mathf.Abs(currentTime);
             timerText.text = currentTime.ToString("f0");
+            return false;
         }
         else
         {
             currentTime = timerDuration;
+            changeRandomness = true;
+            return changeRandomness;
         }
-        
     }
 }

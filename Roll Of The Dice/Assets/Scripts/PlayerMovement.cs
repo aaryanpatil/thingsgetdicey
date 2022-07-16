@@ -1,7 +1,9 @@
 
-using System.Threading;
+using System.Collections;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.PlayerLoop;
 using UnityEngine.UIElements;
 
 public class PlayerMovement : MonoBehaviour
@@ -21,17 +23,36 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] int jumpCount = 0;
     [SerializeField] int maxJumps = 2;
 
+    [Header("Randomness")]
+    [SerializeField] float gravityIncrease; 
+    [SerializeField] float gravityDecrease; 
+    [SerializeField] float gravityNormal; 
+    [SerializeField] float runSpeedIncrease; 
+    [SerializeField] float runSpeedDecrease;
+    [SerializeField] float runSpeedNormal; 
+    [SerializeField] float dragIncrease; 
+    [SerializeField] float dragDecrease; 
+    [SerializeField] float dragNormal;
 
     Rigidbody2D rb2d; 
     BoxCollider2D boxCollider2D;
     CircleCollider2D circleCollider2D;
+
+    
+    Timer timer;
 
 
     private void Awake() 
     {
         rb2d = GetComponent<Rigidbody2D>();   
         boxCollider2D = GetComponent<BoxCollider2D>();
-        circleCollider2D = GetComponent<CircleCollider2D>();   
+        circleCollider2D = GetComponent<CircleCollider2D>();
+        timer = FindObjectOfType<Timer>();   
+    }
+
+    private void Start() 
+    {
+        InvokeRepeating("StartRandomness", timer.timerDuration, timer.timerDuration); 
     }
 
     private void FixedUpdate() 
@@ -39,6 +60,62 @@ public class PlayerMovement : MonoBehaviour
         Run();
     }
 
+    // IEnumerator Tweak()
+    // {
+    //     yield return new WaitForSecondsRealtime(timer.timerDuration);
+    //     TweakGravity();
+    //     TweakSpeed();
+    // }
+
+    void TweakSpeed()
+    {
+        int fac = 0;
+        fac = RandomNumberGenerator.GetInt32(100);
+        Debug.Log("Speed" + fac);
+
+        if(fac < 35)
+        {
+            runSpeed = runSpeedIncrease;
+            return;
+        }
+        else if(fac < 70)
+        {
+            runSpeed = runSpeedDecrease;
+            return;
+        }
+        else
+        {
+            runSpeed = runSpeedNormal;
+        }
+    }
+
+    void TweakGravity()
+    {
+        int fac = 0;
+        fac = RandomNumberGenerator.GetInt32(100);
+        Debug.Log("Gravity" + fac);
+
+        if(fac < 35)
+        {
+            rb2d.gravityScale = gravityIncrease;
+            return;
+        }
+        else if(fac < 70)
+        {
+            rb2d.gravityScale = gravityDecrease;
+            return;
+        }
+        else
+        {
+            rb2d.gravityScale = gravityNormal;
+        }
+    }
+
+    void StartRandomness()
+    {
+        TweakGravity();
+        TweakSpeed();
+    }
     private void OnTriggerEnter2D(Collider2D other) 
     {
         if (other.gameObject.CompareTag("Ground"))
@@ -65,21 +142,17 @@ public class PlayerMovement : MonoBehaviour
         if (value.isPressed && jumpCount <= maxJumps)
         {
             if(rb2d.velocity.y < 0)
-                {
-                    rb2d.AddForce(new Vector2(0f, jumpForce - rb2d.velocity.y), ForceMode2D.Impulse);
-                }
-                else if(rb2d.velocity.y > 0)
-                {
-                    rb2d.AddForce(new Vector2(0f, jumpForce - rb2d.velocity.y), ForceMode2D.Impulse);
-                }
-                else
-                {
-                    rb2d.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
-                }
+            {
+                rb2d.AddForce(new Vector2(0f, jumpForce - rb2d.velocity.y), ForceMode2D.Impulse);
+            }
+            else if(rb2d.velocity.y > 0)
+            {
+               rb2d.AddForce(new Vector2(0f, jumpForce - rb2d.velocity.y), ForceMode2D.Impulse);
+            }
+            else
+            {
+                rb2d.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
+            }
         }
-    }
-
-    
-
-    
+    }   
 }
