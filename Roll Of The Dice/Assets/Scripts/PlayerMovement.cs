@@ -23,6 +23,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] int jumpCount = 0;
     [SerializeField] int maxJumps = 2;
 
+    [Header("Player Death")]
+    [SerializeField] float delayDeath = 0.3f;
+    [SerializeField] float deathVelocityY = 20f;
+
     [Header("Randomness")]
     [SerializeField] float gravityIncrease; 
     [SerializeField] float gravityDecrease; 
@@ -36,6 +40,7 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody2D rb2d; 
     BoxCollider2D boxCollider2D;
     CircleCollider2D circleCollider2D;
+    Animator animator;
 
     
     Timer timer;
@@ -46,7 +51,8 @@ public class PlayerMovement : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();   
         boxCollider2D = GetComponent<BoxCollider2D>();
         circleCollider2D = GetComponent<CircleCollider2D>();
-        timer = FindObjectOfType<Timer>();   
+        timer = FindObjectOfType<Timer>();
+        animator = GetComponent<Animator>();   
     }
 
     private void Start() 
@@ -57,6 +63,13 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate() 
     {
         Run();
+    }
+
+    void ProcessDeath()
+    {
+        rb2d.AddForce(new Vector2 (0, deathVelocityY * rb2d.gravityScale), ForceMode2D.Impulse); 
+        animator.SetTrigger("Death");
+        Destroy(gameObject, delayDeath);
     }
 
     void TweakFriction()
@@ -134,10 +147,10 @@ public class PlayerMovement : MonoBehaviour
             jumpCount = 0;
         }
 
-        // if (other.gameObject.CompareTag("Hazard"))
-        // {
-        //     ProcessDeath();
-        // }
+        if (other.gameObject.CompareTag("Hazard"))
+        {
+            ProcessDeath();
+        }
     }
 
     void Run()
@@ -150,6 +163,14 @@ public class PlayerMovement : MonoBehaviour
     void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
+        if(moveInput.x > 0 || moveInput.x < 0)
+        {
+            animator.SetBool("Running", true);
+        }
+        else
+        {   
+            animator.SetBool("Running", false);
+        }
     }
 
     void OnJump(InputValue value)
