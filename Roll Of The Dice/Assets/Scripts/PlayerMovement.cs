@@ -26,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Player Death")]
     [SerializeField] float delayDeath = 0.3f;
     [SerializeField] float deathVelocityY = 20f;
+    [SerializeField] float deathGravity = 3f;
 
     [Header("Randomness")]
     [SerializeField] float gravityIncrease; 
@@ -73,6 +74,7 @@ public class PlayerMovement : MonoBehaviour
     public void ProcessDeath()
     {
         rb2d.AddForce(new Vector2 (0, deathVelocityY), ForceMode2D.Impulse);
+        rb2d.gravityScale = deathGravity;
         boxCollider2D.enabled = false; 
         animator.SetTrigger("Death");
         Destroy(gameObject, delayDeath);
