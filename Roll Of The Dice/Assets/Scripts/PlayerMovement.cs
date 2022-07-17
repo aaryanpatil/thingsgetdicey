@@ -58,10 +58,13 @@ public class PlayerMovement : MonoBehaviour
     SessionManager sessionManager;
 
     AudioManager audioManager;
+    
+    PauseMenu pauseMenu;
 
 
     private void Awake() 
     {
+        pauseMenu = FindObjectOfType<PauseMenu>();
         rb2d = GetComponent<Rigidbody2D>();   
         boxCollider2D = GetComponent<BoxCollider2D>();
         circleCollider2D = GetComponent<CircleCollider2D>();
@@ -87,6 +90,11 @@ public class PlayerMovement : MonoBehaviour
         Run();
     }
 
+    void OnPause()
+    {
+        pauseMenu.DisplayPauseMenu();
+    }
+    
     public void ProcessDeath()
     {
 
