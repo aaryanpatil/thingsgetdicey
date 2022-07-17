@@ -1,4 +1,5 @@
 
+using System;
 using System.Collections;
 using System.Security.Cryptography;
 using UnityEngine;
@@ -11,8 +12,9 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Horizontal Movement")]
 
-    [SerializeField] float runSpeed = 10f;
+    [SerializeField] float runSpeed = 400f;
     [SerializeField] private float smoothInputSpeed = 0.08f;
+    [HideInInspector] public string runSpeedScale;
     
     Vector2 moveInput;
     Vector2 currentInputVector;
@@ -29,6 +31,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float deathGravity = 3f;
 
     [Header("Randomness")]
+    [HideInInspector] public string currentGravity;
     [SerializeField] float gravityIncrease; 
     [SerializeField] float gravityDecrease; 
     [SerializeField] float gravityNormal;
@@ -37,6 +40,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float runSpeedIncrease; 
     [SerializeField] float runSpeedDecrease;
     [SerializeField] float runSpeedNormal;
+    [HideInInspector] public string wallStick;
     [SerializeField] PhysicsMaterial2D sticky;
     [SerializeField] PhysicsMaterial2D slippery;
 
@@ -59,6 +63,9 @@ public class PlayerMovement : MonoBehaviour
         timer = FindObjectOfType<Timer>();
         animator = GetComponent<Animator>(); 
         sessionManager = FindObjectOfType<SessionManager>();  
+        currentGravity = "normal";
+        runSpeedScale = "normal";
+        wallStick = "true";
     }
 
     private void Start() 
@@ -91,12 +98,14 @@ public class PlayerMovement : MonoBehaviour
         if(fac < 3)
         {
             boxCollider2D.sharedMaterial = sticky;
+            wallStick = "true";
             jumpCount = 0;
             return;
         }
         else 
         {
             boxCollider2D.sharedMaterial = slippery;
+            wallStick = "false";
             return;
         }
     }
@@ -110,15 +119,18 @@ public class PlayerMovement : MonoBehaviour
         if(fac == 1)
         {
             runSpeed = runSpeedIncrease;
+            runSpeedScale = "high";
             return;
         }
         else if(fac == 2)
         {
             runSpeed = runSpeedDecrease;
+            runSpeedScale = "low";
             return;
         }
         else
         {
+            runSpeedScale = "normal";
             runSpeed = runSpeedNormal;
         }
     }
@@ -132,20 +144,25 @@ public class PlayerMovement : MonoBehaviour
         if(fac < 4)
         {
             rb2d.gravityScale = gravityIncrease;
+            currentGravity = "high";
             return;
         }
         else if(fac < 7)
         {
             rb2d.gravityScale = gravityDecrease;
+            currentGravity = "low";
             return;
         }
         else if(fac < 10)
         {
             rb2d.gravityScale = gravityReverse;
+            currentGravity = "reverse";
+            return;
         }
         else
         {
             rb2d.gravityScale = gravityNormal;
+            currentGravity = "normal";
         }
     }
 
