@@ -33,7 +33,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 2.91, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -103,7 +103,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.000000029802322, y: 0.0081778765}
+  m_Offset: {x: 0, y: 0.011476636}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -114,7 +114,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.99456614, y: 0.97767186}
+  m_Size: {x: 0.92112684, y: 1.0145147}
   m_EdgeRadius: 0
 --- !u!58 &4945757784467746375
 CircleCollider2D:
@@ -125,13 +125,13 @@ CircleCollider2D:
   m_GameObject: {fileID: 4945757784467746366}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: 4b27d4146280e1440bfc20d5b10cb6a3, type: 2}
+  m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.038087845}
+  m_Offset: {x: 0, y: -0.019851565}
   serializedVersion: 2
-  m_Radius: 0.5145235
+  m_Radius: 0.5327598
 --- !u!50 &4945757784467746370
 Rigidbody2D:
   serializedVersion: 4
@@ -197,18 +197,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   runSpeed: 400
   smoothInputSpeed: 0.08
+  runSpeedScale: 
   jumpForce: 14
   jumpCount: 0
   maxJumps: 2
   delayDeath: 1
-  deathVelocityY: 20
+  deathVelocityY: 14
+  deathGravity: 3
+  currentGravity: 
   gravityIncrease: 6
   gravityDecrease: 1
   gravityNormal: 3
-  gravityReverse: 0
-  runSpeedIncrease: 1000
-  runSpeedDecrease: 100
+  gravityReverse: -3
+  runSpeedIncrease: 750
+  runSpeedDecrease: 250
   runSpeedNormal: 400
+  wallStick: 
   sticky: {fileID: 6200000, guid: d26a9009283396a4f94c103e522661e6, type: 2}
   slippery: {fileID: 6200000, guid: 4b27d4146280e1440bfc20d5b10cb6a3, type: 2}
 --- !u!95 &4945757784467746374

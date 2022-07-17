@@ -45,3 +45,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waitTime: 1.2
+  gravityValue: {fileID: 0}
+  speedValue: {fileID: 0}
+  wallStickValue: {fileID: 0}
+  highColor:
+    serializedVersion: 2
+    rgba: 4287430551
+  normalColor:
+    serializedVersion: 2
+    rgba: 4294964867
+  lowColor:
+    serializedVersion: 2
+    rgba: 4286611711
+  reverseColor:
+    serializedVersion: 2
+    rgba: 4285071359
