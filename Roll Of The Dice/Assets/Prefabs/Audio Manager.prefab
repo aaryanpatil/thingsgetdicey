@@ -66,3 +66,10 @@ MonoBehaviour:
     loop: 0
     delay: 0
     source: {fileID: 0}
+  - name: Level Complete
+    clip: {fileID: 8300000, guid: c3784c6a9492a6b4dad1b96ad2c2abce, type: 3}
+    volume: 0.3
+    pitch: 1.94
+    loop: 0
+    delay: 0
+    source: {fileID: 0}

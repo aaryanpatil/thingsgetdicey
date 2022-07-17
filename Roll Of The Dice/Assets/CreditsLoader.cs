@@ -1,15 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class CreditsLoader : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI thankYou;
     [SerializeField] TextMeshProUGUI github;
     [SerializeField] TextMeshProUGUI zapsplat;
+    [SerializeField] float loadDelay = 0.5f;
     Animator animator;
+    
     int tracker = 0;
 
     private void Awake() 
@@ -37,6 +39,19 @@ public class CreditsLoader : MonoBehaviour
             github.enabled = false;
             zapsplat.enabled = true;
             tracker++;
+        }
+        else 
+        {
+            if (tracker == 3)
+            {
+                StartCoroutine(LoadStart());     
+            }
+        }
+
+        IEnumerator LoadStart()
+        {
+            yield return new WaitForSecondsRealtime(loadDelay);
+            SceneManager.LoadScene("Start Menu");
         }
     }
 }

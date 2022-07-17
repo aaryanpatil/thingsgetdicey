@@ -6,22 +6,21 @@ using UnityEngine.SceneManagement;
 public class LevelComplete : MonoBehaviour
 {
 
-    [SerializeField] float loadLevelDelay = 1f;
+    [SerializeField] float loadLevelDelay = 2f;
     private bool sfxPlayed = false;
     AudioManager audioManager;
 
-    private void Awake() 
+    private void Awake()
     {
-        
        audioManager = FindObjectOfType<AudioManager>();
     }
     private void OnTriggerEnter2D(Collider2D other) 
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Player") )
         {
+            FindObjectOfType<PlayerMovement>().enabled = false;
             audioManager.Play("Level Complete", 0f);
             sfxPlayed = true;
-
             StartCoroutine(LoadNextLevel());
         }
     }
@@ -36,5 +35,6 @@ public class LevelComplete : MonoBehaviour
         {
             SceneManager.LoadScene("Credits");
         }
+        SceneManager.LoadScene(nextSceneIndex);
     }
 }
