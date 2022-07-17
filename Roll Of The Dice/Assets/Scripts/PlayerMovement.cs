@@ -44,6 +44,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] PhysicsMaterial2D sticky;
     [SerializeField] PhysicsMaterial2D slippery;
 
+    float prevGravityScale;
+    bool isAlive;
+
     Rigidbody2D rb2d; 
     BoxCollider2D boxCollider2D;
     CircleCollider2D circleCollider2D;
@@ -54,6 +57,8 @@ public class PlayerMovement : MonoBehaviour
 
     SessionManager sessionManager;
 
+    AudioManager audioManager;
+
 
     private void Awake() 
     {
@@ -62,15 +67,19 @@ public class PlayerMovement : MonoBehaviour
         circleCollider2D = GetComponent<CircleCollider2D>();
         timer = FindObjectOfType<Timer>();
         animator = GetComponent<Animator>(); 
-        sessionManager = FindObjectOfType<SessionManager>();  
+        sessionManager = FindObjectOfType<SessionManager>(); 
+        audioManager = FindObjectOfType<AudioManager>(); 
         currentGravity = "normal";
         runSpeedScale = "normal";
         wallStick = "true";
+        prevGravityScale = 1;
+        isAlive = true;
     }
 
     private void Start() 
     {
-        InvokeRepeating("StartRandomness", timer.timerDuration, timer.timerDuration); 
+        isAlive = true;
+        InvokeRepeating("StartRandomness", timer.timerDuration, timer.timerDuration);      
     }
 
     private void FixedUpdate() 
@@ -80,6 +89,11 @@ public class PlayerMovement : MonoBehaviour
 
     public void ProcessDeath()
     {
+
+        if(!isAlive) { return; }
+
+        isAlive = false;
+        audioManager.Play("Death SFX", 0);
         rb2d.AddForce(new Vector2 (0, deathVelocityY), ForceMode2D.Impulse);
         rb2d.gravityScale = deathGravity;
         boxCollider2D.enabled = false; 
@@ -99,7 +113,6 @@ public class PlayerMovement : MonoBehaviour
         {
             boxCollider2D.sharedMaterial = sticky;
             wallStick = "true";
-            jumpCount = 0;
             return;
         }
         else 
@@ -140,38 +153,49 @@ public class PlayerMovement : MonoBehaviour
         int fac = 0;
         fac = RandomNumberGenerator.GetInt32(1, 15);
         Debug.Log("Gravity: " + fac);
-
+        if(prevGravityScale < 0 && fac != 8 && fac != 9)
+        {
+            animator.SetTrigger("Return");
+        }
         if(fac < 4)
         {
             rb2d.gravityScale = gravityIncrease;
             currentGravity = "high";
+            prevGravityScale = gravityIncrease;
             return;
         }
-        else if(fac < 7)
+        else if(fac < 8)
         {
             rb2d.gravityScale = gravityDecrease;
             currentGravity = "low";
+            prevGravityScale = gravityDecrease;
             return;
         }
         else if(fac < 10)
         {
             rb2d.gravityScale = gravityReverse;
+            animator.SetTrigger("Invert");
             currentGravity = "reverse";
+            prevGravityScale = gravityReverse;
             return;
         }
         else
         {
             rb2d.gravityScale = gravityNormal;
             currentGravity = "normal";
+            prevGravityScale = gravityNormal;
         }
+        
     }
 
     void StartRandomness()
     {
+        if(!isAlive) { return; }
         TweakGravity();
         TweakSpeed();
         TweakFriction();
     }
+
     private void OnTriggerEnter2D(Collider2D other) 
     {
         if (other.gameObject.CompareTag("Ground"))
@@ -195,6 +219,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Run()
     {
+        if(!isAlive) { return; }
+
         currentInputVector = Vector2.SmoothDamp(currentInputVector, moveInput, ref smoothInputVelocity, smoothInputSpeed);
         Vector2 playerVelocity = new Vector2(currentInputVector.x * runSpeed *  Time.fixedDeltaTime, rb2d.velocity.y);
         rb2d.velocity = playerVelocity;     
@@ -216,7 +242,7 @@ public class PlayerMovement : MonoBehaviour
     void OnJump(InputValue value)
     {
         jumpCount++;
-        if (value.isPressed && jumpCount <= maxJumps)
+        if (value.isPressed && jumpCount <= maxJumps && rb2d.gravityScale > 0)
         {
             animator.SetBool("Running", true);
             if(rb2d.velocity.y < 0)
@@ -230,6 +256,23 @@ public class PlayerMovement : MonoBehaviour
             else
             {
                 rb2d.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
+            }
+        }
+
+        else if (value.isPressed && jumpCount <= maxJumps && rb2d.gravityScale < 0)
+        {
+            animator.SetBool("Running", true);
+            if(rb2d.velocity.y > 0)
+            {
+                rb2d.AddForce(new Vector2(0f, -(jumpForce + rb2d.velocity.y)), ForceMode2D.Impulse);
+            }
+            else if(rb2d.velocity.y < 0)
+            {
+               rb2d.AddForce(new Vector2(0f, -(jumpForce + rb2d.velocity.y)), ForceMode2D.Impulse);
+            }
+            else
+            {
+                rb2d.AddForce(new Vector2(0f, -jumpForce), ForceMode2D.Impulse);
             }
         }
         else

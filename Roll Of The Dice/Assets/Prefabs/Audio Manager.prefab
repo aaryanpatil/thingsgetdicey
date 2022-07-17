@@ -44,4 +44,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a96c72385fe7d645bd8bdfaa8abbe6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sounds: []
+  sounds:
+  - name: Game Theme
+    clip: {fileID: 8300000, guid: b09e8289e65157e4a8d999d8ee1bfda6, type: 3}
+    volume: 0.5
+    pitch: 1.4
+    loop: 1
+    delay: 0
+    source: {fileID: 0}
+  - name: Change SFX
+    clip: {fileID: 8300000, guid: 2839a20a3da637442a7c515b8711efa8, type: 3}
+    volume: 1
+    pitch: 0.75
+    loop: 0
+    delay: 0
+    source: {fileID: 0}
+  - name: Death SFX
+    clip: {fileID: 8300000, guid: 134ccca0c56a26545bed7f8471144183, type: 3}
+    volume: 0.75
+    pitch: 1.4
+    loop: 0
+    delay: 0
+    source: {fileID: 0}

@@ -10,8 +10,13 @@ public class Timer : MonoBehaviour
     
     public float currentTime;
     public bool changeRandomness = false;
-    
 
+    AudioManager audioManager;
+    
+    private void Awake() 
+    {
+        audioManager = FindObjectOfType<AudioManager>();    
+    }
     private void Start() 
     {
         currentTime = timerDuration;
@@ -22,19 +27,18 @@ public class Timer : MonoBehaviour
         RunTimer();
     }
 
-    public bool RunTimer()
+    void RunTimer()
     {
         currentTime -= Time.deltaTime;
         if (currentTime >= 0)
         {
             timerText.text = currentTime.ToString("f0");
-            return false;
         }
         else
         {
+            audioManager.Play("Change SFX", 0f);
             currentTime = timerDuration;
-            changeRandomness = true;
-            return changeRandomness;
+            
         }
     }
 }
