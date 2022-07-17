@@ -228,6 +228,7 @@ public class PlayerMovement : MonoBehaviour
 
     void OnMove(InputValue value)
     {
+        if (!isAlive) { return; }
         moveInput = value.Get<Vector2>();
         if(moveInput.x > 0 || moveInput.x < 0)
         {
@@ -241,6 +242,7 @@ public class PlayerMovement : MonoBehaviour
 
     void OnJump(InputValue value)
     {
+        if (!isAlive) { return; }
         jumpCount++;
         if (value.isPressed && jumpCount <= maxJumps && rb2d.gravityScale > 0)
         {

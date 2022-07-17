@@ -89,16 +89,25 @@ public class SessionManager : MonoBehaviour
         speedValue.text = player.runSpeedScale;
     }
 
-    public void ReloadLevel()
+    public void LoadNextLevel()
     {
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        StartCoroutine(LoadLevelAfterDelay(currentSceneIndex));
+        int nextSceneIndex = currentSceneIndex + 1;
         
     }
 
-    IEnumerator LoadLevelAfterDelay(int currentSceneIndex)
+    public void ReloadLevel()
+    {
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        StartCoroutine(ReloadLevelAfterDelay(currentSceneIndex));
+        
+    }
+
+    IEnumerator ReloadLevelAfterDelay(int currentSceneIndex)
     {
         yield return new WaitForSecondsRealtime(waitTime);
         SceneManager.LoadScene(currentSceneIndex);
     }
+
+
 }

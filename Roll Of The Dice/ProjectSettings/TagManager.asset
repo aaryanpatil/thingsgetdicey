@@ -16,7 +16,7 @@ TagManager:
   - Ground
   - Hazard
   - Player
-  - 
+  - Interactables
   - 
   - 
   - 
@@ -48,6 +48,9 @@ TagManager:
     locked: 0
   - name: Hazard
     uniqueID: 1458237759
+    locked: 0
+  - name: Interactables
+    uniqueID: 217071755
     locked: 0
   - name: Player
     uniqueID: 492901271
